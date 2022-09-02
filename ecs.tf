@@ -13,9 +13,9 @@ data "aws_security_groups" "default_security_group" {
 
 locals {
   network_configuration = {
-    subnets          = var.network_configuration.subnets.length == 0 ? toset(data.aws_subnets.default_public_subnets.ids) : var.network_configuration.subnets
-    security_groups  = var.network_configuration.security_groups.length == 0 ? toset(data.aws_security_groups.default_security_group.ids) : var.network_configuration.security_groups
-    assign_public_ip = var.network_configuration.subnets.length == 0 ? true : var.network_configuration.assign_public_ip
+    subnets          = length(var.network_configuration.subnets) == 0 ? toset(data.aws_subnets.default_public_subnets.ids) : var.network_configuration.subnets
+    security_groups  = length(var.network_configuration.security_groups) == 0 ? toset(data.aws_security_groups.default_security_group.ids) : var.network_configuration.security_groups
+    assign_public_ip = length(var.network_configuration.subnets) == 0 ? true : var.network_configuration.assign_public_ip
   }
 }
 resource "aws_ecs_service" "ecs" {

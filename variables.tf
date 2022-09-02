@@ -3,6 +3,22 @@ variable "project_name" {
   description = "Name of the project"
 }
 
+variable "service_name" {
+  type        = string
+  description = "Name of the service"
+}
+
+variable "task_role_arn" {
+  type        = string
+  description = "task role arn"
+  default     = ""
+}
+
+variable "target_group_arn" {
+  type        = string
+  description = "target group arn"
+}
+
 
 variable "tags" {
   type = object({
@@ -22,7 +38,7 @@ variable "requires_compatibilities" {
 }
 
 variable "container_definitions" {
-  type        = list(object)
+  type        = list(any)
   description = "Container definition for the service"
 }
 
