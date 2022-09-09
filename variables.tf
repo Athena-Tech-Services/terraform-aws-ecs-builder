@@ -103,4 +103,44 @@ variable "network_configuration" {
     assign_public_ip = bool
   })
   description = "network configuration for the ecs service"
+  default = {
+    assign_public_ip = false
+    security_groups  = []
+    subnets          = []
+  }
+}
+
+
+variable "execution_role_iam_permissions" {
+  type = list(object({
+    effect    = string
+    actions   = list(string)
+    resources = list(string)
+  }))
+  description = "service iam permissions"
+  default = [
+  ]
+
+}
+
+
+variable "ecr_repo_arn" {
+  type        = string
+  description = "ecr repo arn"
+}
+
+variable "execution_role_arn" {
+  type        = string
+  description = "ecr repo arn"
+  default     = ""
+}
+
+
+variable "secrets" {
+  type = list(object({
+    valueFrom = string,
+    name      = string
+  }))
+  description = "container secrets"
+
 }

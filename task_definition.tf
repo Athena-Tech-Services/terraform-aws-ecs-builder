@@ -4,7 +4,7 @@ data "aws_iam_policy_document" "ecs_assume_role_policy" {
     effect  = "Allow"
     principals {
       type        = "Service"
-      identifiers = ["ecs.amazonaws.com"]
+      identifiers = ["ecs-tasks.amazonaws.com"]
     }
   }
 }
@@ -35,7 +35,8 @@ resource "aws_iam_role_policy" "policy" {
 }
 
 locals {
-  task_role_arn = var.task_role_arn != "" ? var.task_role_arn : aws_iam_role.ecs_role.arn
+  task_role_arn      = var.task_role_arn != "" ? var.task_role_arn : aws_iam_role.ecs_role.arn
+  execution_role_arn = var.execution_role_arn != "" ? var.execution_role_arn : aws_iam_role.execution_role.arn
 }
 
 resource "aws_ecs_task_definition" "task" {
@@ -46,4 +47,5 @@ resource "aws_ecs_task_definition" "task" {
   requires_compatibilities = var.requires_compatibilities
   task_role_arn            = local.task_role_arn
   network_mode             = var.network_mode
+  execution_role_arn       = local.execution_role_arn
 }
