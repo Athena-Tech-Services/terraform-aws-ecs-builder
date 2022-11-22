@@ -17,6 +17,12 @@ locals {
     security_groups  = length(var.network_configuration.security_groups) == 0 ? toset(data.aws_security_groups.default_security_group.ids) : var.network_configuration.security_groups
     assign_public_ip = length(var.network_configuration.subnets) == 0 ? true : var.network_configuration.assign_public_ip
   }
+  load_balancer_detail = [{
+    target_group_arn = var.target_group_arn
+    container_name   = var.service_name
+    container_port   = var.container_port
+  }]
+  load_balancer = var.target_group_arn == "" ? [] : local.load_balancer_detail
 }
 resource "aws_ecs_service" "ecs" {
   name            = var.service_name
@@ -29,10 +35,14 @@ resource "aws_ecs_service" "ecs" {
     capacity_provider = var.capacity_strategy.capacity_provider_name
     weight            = var.capacity_strategy.capacity_weight
   }
-  load_balancer {
-    target_group_arn = var.target_group_arn
-    container_name   = var.service_name
-    container_port   = var.container_port
+  dynamic "load_balancer" {
+    for_each = local.load_balancer
+    content {
+      target_group_arn = load_balancer.value["target_group_arn"]
+      container_name   = load_balancer.value["service_name"]
+      container_port   = load_balancer.value["container_port"]
+    }
+
   }
   lifecycle {
     ignore_changes = [
